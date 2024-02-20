@@ -7,6 +7,7 @@ import { requestConfig } from './requestConfig';
 import React from 'react';
 import { getLoginUserUsingGet } from './services/backend/userController';
 const loginPath = '/user/login';
+import logo  from '@/assets/logo.jpg'
 
 export async function getInitialState(): Promise<InitialState> {
   const initalState: InitialState = {
@@ -20,15 +21,8 @@ export async function getInitialState(): Promise<InitialState> {
       const res = await getLoginUserUsingGet();
       initalState.currentUser = res.data;
     } catch (error) {
-      // 如果未登录
+      
     }
-
-    // const mockUser: API.LoginUserVO = {
-    //   userAvatar: 'https://gw.alipayobjects.com/zos/rmsportal/BiazfanxmamNRoxxVxka.png',
-    //   userName: 'KGD',
-    //   userRole: 'admin',
-    // };
-    // initalState.currentUser = mockUser;
   }
   return initalState;
 }
@@ -37,7 +31,7 @@ export async function getInitialState(): Promise<InitialState> {
 // ProLayout 支持的api https://procomponents.ant.design/components/layout
 export const layout: RunTimeLayoutConfig = ({ initialState }) => {
   return {
-    // logo,
+    logo,
     avatarProps: {
       render: () => {
         return <AvatarDropdown />;

@@ -73,7 +73,7 @@ export default defineConfig({
    * @name layout 插件
    * @doc https://umijs.org/docs/max/layout-menu
    */
-  title: 'KGD-Reeact-template',
+  title: 'KGD-CodeGenerator',
   layout: {
     locale: true,
     ...defaultSettings,
@@ -143,7 +143,7 @@ export default defineConfig({
   openAPI: [
     {
       requestLibPath: "import { request } from '@umijs/max'",
-      schemaPath: "http://localhost:8101/api/v2/api-docs",
+      schemaPath: 'http://39.103.190.34:8101/api/v2/api-docs',
       projectName: 'backend',
     },
   ],
