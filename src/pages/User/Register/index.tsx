@@ -1,11 +1,8 @@
 import { userLoginUsingPost } from '@/services/backend/userController';
 import { Footer } from '@/components';
 import {
-  AlipayCircleOutlined,
   LockOutlined,
-  TaobaoCircleOutlined,
   UserOutlined,
-  WeiboCircleOutlined,
 } from '@ant-design/icons';
 import { LoginForm, ProFormText } from '@ant-design/pro-components';
 import { history, useModel, Helmet } from '@umijs/max';
@@ -17,17 +14,6 @@ import { Link } from 'umi';
 
 const useStyles = createStyles(({ token }) => {
   return {
-    action: {
-      marginLeft: '8px',
-      color: 'rgba(0, 0, 0, 0.2)',
-      fontSize: '24px',
-      verticalAlign: 'middle',
-      cursor: 'pointer',
-      transition: 'color 0.3s',
-      '&:hover': {
-        color: token.colorPrimaryActive,
-      },
-    },
     container: {
       display: 'flex',
       flexDirection: 'column',
@@ -39,17 +25,6 @@ const useStyles = createStyles(({ token }) => {
     },
   };
 });
-const ActionIcons = () => {
-  const { styles } = useStyles();
-  return (
-    <>
-      <AlipayCircleOutlined key="AlipayCircleOutlined" className={styles.action} />
-      <TaobaoCircleOutlined key="TaobaoCircleOutlined" className={styles.action} />
-      <WeiboCircleOutlined key="WeiboCircleOutlined" className={styles.action} />
-    </>
-  );
-};
-
 const Login: React.FC = () => {
   const [type, setType] = useState<string>('account');
   const { initialState, setInitialState } = useModel('@@initialState');
@@ -62,23 +37,23 @@ const Login: React.FC = () => {
         ...values,
       });
       if (res.code === 0) {
-        const defaultLoginSuccessMessage = '登录成功！';
+        const defaultLoginSuccessMessage = '注册成功，请重新登录！';
         message.success(defaultLoginSuccessMessage);
-        setInitialState({ ...initialState, currentUser: res.data });
-        const urlParams = new URL(window.location.href).searchParams;
-        history.push(urlParams.get('redirect') || '/');
+        // setInitialState({ ...initialState, currentUser: res.data });
+        // const urlParams = new URL(window.location.href).searchParams;
+        history.push('/user/login');
         return;
       }
     } catch (error: any) {
-      const defaultLoginFailureMessage = `登录失败，请重试！${error.message}`;
+      const defaultLoginFailureMessage = `注册失败，请重试！${error.message}`;
       message.error(defaultLoginFailureMessage);
     }
   };
   return (
-    <div className={styles.container}>
+    <div className= {styles.container}>
       <Helmet>
         <title>
-          {'登录'}- {Settings.title}
+          {'注册'}- {Settings.title}
         </title>
       </Helmet>
 
@@ -99,10 +74,15 @@ const Login: React.FC = () => {
           initialValues={{
             autoLogin: true,
           }}
-          actions={['其他登录方式 :', <ActionIcons key="icons" />]}
           onFinish={async (values) => {
             await handleSubmit(values as API.UserLoginRequest);
           }}
+          submitter={{
+            searchConfig: {
+              submitText: '注册',
+            },
+            }
+          }
         >
           <Tabs
             activeKey={type}
@@ -111,7 +91,7 @@ const Login: React.FC = () => {
             items={[
               {
                 key: 'account',
-                label: '账户密码登录',
+                label: '新用户注册',
               },
             ]}
           />
@@ -124,7 +104,7 @@ const Login: React.FC = () => {
                   size: 'large',
                   prefix: <UserOutlined />,
                 }}
-                placeholder={'用户名: admin or user'}
+                placeholder={'请输入用户名'}
                 rules={[
                   {
                     required: true,
@@ -138,7 +118,21 @@ const Login: React.FC = () => {
                   size: 'large',
                   prefix: <LockOutlined />,
                 }}
-                placeholder={'密码: ant.design'}
+                placeholder={'请输入密码'}
+                rules={[
+                  {
+                    required: true,
+                    message: '密码是必填项！',
+                  },
+                ]}
+              />
+              <ProFormText.Password
+                name="userPassword"
+                fieldProps={{
+                  size: 'large',
+                  prefix: <LockOutlined />,
+                }}
+                placeholder={'请再次输入密码'}
                 rules={[
                   {
                     required: true,
@@ -155,7 +149,7 @@ const Login: React.FC = () => {
               marginBottom: 16,
             }}
           >
-            <Link to="/user/register">新用户注册</Link>
+            <Link to="/user/login">用户登录</Link>
           </div>
         </LoginForm>
       </div>
