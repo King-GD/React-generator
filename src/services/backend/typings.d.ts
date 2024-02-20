@@ -5,9 +5,9 @@ declare namespace API {
     message?: string;
   };
 
-  type BaseResponseInt_ = {
+  type BaseResponseGeneratorVO_ = {
     code?: number;
-    data?: number;
+    data?: GeneratorVO;
     message?: string;
   };
 
@@ -23,15 +23,15 @@ declare namespace API {
     message?: string;
   };
 
-  type BaseResponsePagePost_ = {
+  type BaseResponsePageGenerator_ = {
     code?: number;
-    data?: PagePost_;
+    data?: PageGenerator_;
     message?: string;
   };
 
-  type BaseResponsePagePostVO_ = {
+  type BaseResponsePageGeneratorVO_ = {
     code?: number;
-    data?: PagePostVO_;
+    data?: PageGeneratorVO_;
     message?: string;
   };
 
@@ -44,12 +44,6 @@ declare namespace API {
   type BaseResponsePageUserVO_ = {
     code?: number;
     data?: PageUserVO_;
-    message?: string;
-  };
-
-  type BaseResponsePostVO_ = {
-    code?: number;
-    data?: PostVO;
     message?: string;
   };
 
@@ -71,22 +65,150 @@ declare namespace API {
     message?: string;
   };
 
-  type checkUsingGETParams = {
-    /** echostr */
-    echostr?: string;
-    /** nonce */
-    nonce?: string;
-    /** signature */
-    signature?: string;
-    /** timestamp */
-    timestamp?: string;
-  };
-
   type DeleteRequest = {
     id?: number;
   };
 
-  type getPostVOByIdUsingGETParams = {
+  type downloadGeneratorByIdUsingGETParams = {
+    /** id */
+    id?: number;
+  };
+
+  type FileConfig = {
+    files?: FileInfo[];
+    inputRootPath?: string;
+    outputRootPath?: string;
+    sourceRootPath?: string;
+    type?: string;
+  };
+
+  type FileInfo = {
+    condition?: string;
+    files?: FileInfo[];
+    generateType?: string;
+    groupKey?: string;
+    groupName?: string;
+    inputPath?: string;
+    outputPath?: string;
+    type?: string;
+  };
+
+  type Generator = {
+    author?: string;
+    basePackage?: string;
+    createTime?: string;
+    description?: string;
+    distPath?: string;
+    fileConfig?: string;
+    id?: number;
+    isDelete?: number;
+    modelConfig?: string;
+    name?: string;
+    picture?: string;
+    status?: number;
+    tags?: string;
+    updateTime?: string;
+    userId?: number;
+    version?: string;
+  };
+
+  type GeneratorAddRequest = {
+    author?: string;
+    basePackage?: string;
+    description?: string;
+    distPath?: string;
+    fileConfig?: FileConfig;
+    modelConfig?: ModelConfig;
+    name?: string;
+    picture?: string;
+    status?: number;
+    tags?: string[];
+    version?: string;
+  };
+
+  type GeneratorCacheRequest = {
+    id?: number;
+  };
+
+  type GeneratorEditRequest = {
+    author?: string;
+    basePackage?: string;
+    description?: string;
+    distPath?: string;
+    fileConfig?: FileConfig;
+    id?: number;
+    modelConfig?: ModelConfig;
+    name?: string;
+    picture?: string;
+    tags?: string[];
+    version?: string;
+  };
+
+  type GeneratorMakeRequest = {
+    meta?: Meta;
+    zipFilePath?: string;
+  };
+
+  type GeneratorQueryRequest = {
+    author?: string;
+    basePackage?: string;
+    current?: number;
+    description?: string;
+    distPath?: string;
+    id?: number;
+    name?: string;
+    notId?: number;
+    orTags?: string[];
+    pageSize?: number;
+    searchText?: string;
+    sortField?: string;
+    sortOrder?: string;
+    status?: number;
+    tags?: string[];
+    userId?: number;
+    version?: string;
+  };
+
+  type GeneratorUpdateRequest = {
+    author?: string;
+    basePackage?: string;
+    description?: string;
+    distPath?: string;
+    fileConfig?: FileConfig;
+    id?: number;
+    modelConfig?: ModelConfig;
+    name?: string;
+    picture?: string;
+    status?: number;
+    tags?: string[];
+    version?: string;
+  };
+
+  type GeneratorUseRequest = {
+    dataModel?: Record<string, any>;
+    id?: number;
+  };
+
+  type GeneratorVO = {
+    author?: string;
+    basePackage?: string;
+    createTime?: string;
+    description?: string;
+    distPath?: string;
+    fileConfig?: FileConfig;
+    id?: number;
+    modelConfig?: ModelConfig;
+    name?: string;
+    picture?: string;
+    status?: number;
+    tags?: string[];
+    updateTime?: string;
+    user?: UserVO;
+    userId?: number;
+    version?: string;
+  };
+
+  type getGeneratorVOByIdUsingGETParams = {
     /** id */
     id?: number;
   };
@@ -111,32 +233,60 @@ declare namespace API {
     userRole?: string;
   };
 
+  type Meta = {
+    author?: string;
+    basePackage?: string;
+    createTime?: string;
+    description?: string;
+    fileConfig?: FileConfig;
+    modelConfig?: ModelConfig;
+    name?: string;
+    version?: string;
+  };
+
+  type ModelConfig = {
+    models?: ModelInfo[];
+  };
+
+  type ModelInfo = {
+    abbr?: string;
+    allArgsStr?: string;
+    condition?: string;
+    defaultValue?: Record<string, any>;
+    description?: string;
+    fieldName?: string;
+    groupKey?: string;
+    groupName?: string;
+    models?: ModelInfo[];
+    type?: string;
+  };
+
   type OrderItem = {
     asc?: boolean;
     column?: string;
   };
 
-  type PagePost_ = {
+  type PageGenerator_ = {
     countId?: string;
     current?: number;
     maxLimit?: number;
     optimizeCountSql?: boolean;
     orders?: OrderItem[];
     pages?: number;
-    records?: Post[];
+    records?: Generator[];
     searchCount?: boolean;
     size?: number;
     total?: number;
   };
 
-  type PagePostVO_ = {
+  type PageGeneratorVO_ = {
     countId?: string;
     current?: number;
     maxLimit?: number;
     optimizeCountSql?: boolean;
     orders?: OrderItem[];
     pages?: number;
-    records?: PostVO[];
+    records?: GeneratorVO[];
     searchCount?: boolean;
     size?: number;
     total?: number;
@@ -168,85 +318,9 @@ declare namespace API {
     total?: number;
   };
 
-  type Post = {
-    content?: string;
-    createTime?: string;
-    favourNum?: number;
-    id?: number;
-    isDelete?: number;
-    tags?: string;
-    thumbNum?: number;
-    title?: string;
-    updateTime?: string;
-    userId?: number;
-  };
-
-  type PostAddRequest = {
-    content?: string;
-    tags?: string[];
-    title?: string;
-  };
-
-  type PostEditRequest = {
-    content?: string;
-    id?: number;
-    tags?: string[];
-    title?: string;
-  };
-
-  type PostFavourAddRequest = {
-    postId?: number;
-  };
-
-  type PostFavourQueryRequest = {
-    current?: number;
-    pageSize?: number;
-    postQueryRequest?: PostQueryRequest;
-    sortField?: string;
-    sortOrder?: string;
-    userId?: number;
-  };
-
-  type PostQueryRequest = {
-    content?: string;
-    current?: number;
-    favourUserId?: number;
-    id?: number;
-    notId?: number;
-    orTags?: string[];
-    pageSize?: number;
-    searchText?: string;
-    sortField?: string;
-    sortOrder?: string;
-    tags?: string[];
-    title?: string;
-    userId?: number;
-  };
-
-  type PostThumbAddRequest = {
-    postId?: number;
-  };
-
-  type PostUpdateRequest = {
-    content?: string;
-    id?: number;
-    tags?: string[];
-    title?: string;
-  };
-
-  type PostVO = {
-    content?: string;
-    createTime?: string;
-    favourNum?: number;
-    hasFavour?: boolean;
-    hasThumb?: boolean;
-    id?: number;
-    tagList?: string[];
-    thumbNum?: number;
-    title?: string;
-    updateTime?: string;
-    user?: UserVO;
-    userId?: number;
+  type testDownloadFileUsingGETParams = {
+    /** filepath */
+    filepath?: string;
   };
 
   type uploadFileUsingPOSTParams = {
@@ -257,8 +331,6 @@ declare namespace API {
     createTime?: string;
     id?: number;
     isDelete?: number;
-    mpOpenId?: string;
-    unionId?: string;
     updateTime?: string;
     userAccount?: string;
     userAvatar?: string;
@@ -275,11 +347,6 @@ declare namespace API {
     userRole?: string;
   };
 
-  type userLoginByWxOpenUsingGETParams = {
-    /** code */
-    code: string;
-  };
-
   type UserLoginRequest = {
     userAccount?: string;
     userPassword?: string;
@@ -288,11 +355,9 @@ declare namespace API {
   type UserQueryRequest = {
     current?: number;
     id?: number;
-    mpOpenId?: string;
     pageSize?: number;
     sortField?: string;
     sortOrder?: string;
-    unionId?: string;
     userName?: string;
     userProfile?: string;
     userRole?: string;

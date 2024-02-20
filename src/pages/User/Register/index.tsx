@@ -1,4 +1,4 @@
-import { userLoginUsingPost } from '@/services/backend/userController';
+import { userRegisterUsingPost } from '@/services/backend/userController';
 import { Footer } from '@/components';
 import {
   LockOutlined,
@@ -12,7 +12,7 @@ import React, { useState } from 'react';
 import { createStyles } from 'antd-style';
 import { Link } from 'umi';
 
-const useStyles = createStyles(({ token }) => {
+const useStyles = createStyles(() => {
   return {
     container: {
       display: 'flex',
@@ -33,7 +33,7 @@ const Login: React.FC = () => {
   const handleSubmit = async (values: API.UserLoginRequest) => {
     try {
       // 登录
-      const res = await userLoginUsingPost({
+      const res = await userRegisterUsingPost({
         ...values,
       });
       if (res.code === 0) {
@@ -127,7 +127,7 @@ const Login: React.FC = () => {
                 ]}
               />
               <ProFormText.Password
-                name="userPassword"
+                name="checkPassword"
                 fieldProps={{
                   size: 'large',
                   prefix: <LockOutlined />,

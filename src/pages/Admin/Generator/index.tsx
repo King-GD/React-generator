@@ -10,7 +10,7 @@ import CreateModal from './components/CreateModel';
 
 /**
  *
- * 用户管理页面
+ * 生成器管理页面
  */
 const UserAdminPage: React.FC = () => {
   /**
@@ -119,7 +119,7 @@ const UserAdminPage: React.FC = () => {
       dataIndex: 'option',
       valueType: 'option',
       render: (_, record) => (
-        <Space size='small'>
+        <Space size="middle">
           <Typography.Link
             onClick={() => {
               setCurrentRow(record);
