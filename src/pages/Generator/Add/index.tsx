@@ -10,7 +10,9 @@ import {
   ProFormTextArea,
   StepsForm,
 } from '@ant-design/pro-components';
-import React, { useRef } from 'react';
+import { message } from 'antd';
+import React, { useRef, useState } from 'react';
+import { history } from 'umi';
 
 /**
  * 创建生成器页面
@@ -18,15 +20,54 @@ import React, { useRef } from 'react';
  */
 const GeneratorAddPage: React.FC = () => {
   const formRef = useRef<ProFormInstance>();
+  const [formData, setFormData] = useState<API.GeneratorAddRequest>({});
+  const [currentStep, setCurrentStep] = useState(0);
+
+  const doSubmit = async (value: API.GeneratorAddRequest) => {
+    console.log(value);
+    // 数据转换
+    if (!value.fileConfig) {
+      value.fileConfig = {};
+    }
+
+    if (!value.modelConfig) {
+      value.modelConfig = {};
+    }
+    // 文件列表转url
+    if (value.distPath && value.distPath.length > 0) {
+      // @ts-ignore
+      value.distPath = value.distPath[0].response;
+    }
+    try {
+      const res = await addGeneratorUsingPost(value);
+      if (res.data) {
+        message.success('创建成功');
+        history.push(`/generator/detail/${res.data}`);
+      }
+    } catch (e: any) {
+      message.error('创建失败：' + e.message);
+    }
+  };
 
   return (
     <ProCard>
-      <StepsForm<API.GeneratorAddRequest> formRef={formRef}>
+      <StepsForm<API.GeneratorAddRequest>
+        formRef={formRef}
+        onFinish={doSubmit}
+        onCurrentChange={(step) => {
+          if (step < currentStep) {
+            formRef.current?.setFieldsValue(formData);
+          }
+          setCurrentStep(step);
+        }}
+      >
         <StepsForm.StepForm
           name="base"
           title="基本信息"
           onFinish={async () => {
-            console.log(formRef.current?.getFieldsValue());
+            const values = formRef.current?.getFieldsValue();
+            setFormData(values);
+            console.log(values);
             return true;
           }}
         >
