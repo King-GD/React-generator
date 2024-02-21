@@ -20,7 +20,9 @@ import { history } from 'umi';
  */
 const GeneratorAddPage: React.FC = () => {
   const formRef = useRef<ProFormInstance>();
+  // 表单数据
   const [formData, setFormData] = useState<API.GeneratorAddRequest>({});
+  // 当前表单步骤
   const [currentStep, setCurrentStep] = useState(0);
 
   const doSubmit = async (value: API.GeneratorAddRequest) => {
