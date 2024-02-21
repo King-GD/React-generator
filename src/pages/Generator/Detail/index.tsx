@@ -21,6 +21,9 @@ const GeneratorAddPage: React.FC = () => {
   const { id } = useParams();
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<API.GeneratorVO>({});
+  const { initialState } = useModel('@@initialState');
+  const { currentUser } = initialState ?? {};
+  const my = currentUser?.id === data?.userId;
 
   const loadData = async () => {
     if (id) {
@@ -40,6 +43,7 @@ const GeneratorAddPage: React.FC = () => {
     loadData();
   }, [id]);
 
+  // 标签列表
   const tagListView = (tags?: string[]) => {
     if (!tags) {
       return <></>;
@@ -52,6 +56,43 @@ const GeneratorAddPage: React.FC = () => {
       </div>
     );
   };
+
+  /**
+   * 下载按钮
+   */
+
+  const downloadButton = data.distPath && currentUser && (
+    <Button
+      icon={<DownloadOutlined />}
+      onClick={async () => {
+        try {
+          const blob = await downloadGeneratorByIdUsingGet(
+            { id: data.id },
+            {
+              response: 'blob',
+            },
+          );
+          // 使用file-saver保存文件
+          const fullPath = data.distPath || '';
+          saveAs(blob, fullPath.substring(fullPath.lastIndexOf('/') + 1));
+        } catch (error: any) {
+          message.error('下载失败' + error.message);
+        }
+      }}
+    >
+      下载
+    </Button>
+  );
+
+  /**
+   * 编辑按钮
+   */
+
+  const editButton = my && (
+    <Link to={`/generator/update?${data.id}`}>
+      <Button icon={<EditOutlined />}>编辑</Button>
+    </Link>
+  );
 
   return (
     <PageContainer title={<></>} loading={loading}>
@@ -72,7 +113,8 @@ const GeneratorAddPage: React.FC = () => {
             <div style={{ marginBottom: 24 }}></div>
             <Space size="middle">
               <Button type="primary">立即使用</Button>
-              <Button icon={<DownloadOutlined />}>下载</Button>
+              {downloadButton}
+              {editButton}
             </Space>
           </Col>
           <Col flex="320px">
@@ -80,7 +122,7 @@ const GeneratorAddPage: React.FC = () => {
           </Col>
         </Row>
       </Card>
-      <div style={{marginBottom: 24}}></div>
+      <div style={{ marginBottom: 24 }}></div>
       <Tabs
         size="large"
         defaultActiveKey={'fileConfig'}
