@@ -1,14 +1,13 @@
 import { message, Modal } from 'antd';
-import  '@umijs/max';
-import { addUserUsingPost } from '@/services/backend/userController';
-import { ProTable, ProColumns } from '@ant-design/pro-components';  
+import '@umijs/max';
+import { addGeneratorUsingPost } from '@/services/backend/generatorController';
+import { ProTable, ProColumns } from '@ant-design/pro-components';
 import React from 'react';
-
 
 interface Props {
   visible: boolean;
-  columns: ProColumns<API.User>[];
-  onSubmit?: (values: API.UserAddRequest) => void;
+  columns: ProColumns<API.Generator>[];
+  onSubmit?: (values: API.GeneratorAddRequest) => void;
   onCancel?: () => void;
 }
 
@@ -17,12 +16,12 @@ interface Props {
  * @zh-CN 添加节点
  * @param fields
  */
-const handleAdd = async (fields: API.User) => {
+const handleAdd = async (fields: API.GeneratorAddRequest) => {
   const hide = message.loading('正在添加');
+  fields.fileConfig = JSON.parse((fields.fileConfig || '{}') as string);
+  fields.modelConfig = JSON.parse((fields.modelConfig || '{}') as string);
   try {
-    await addUserUsingPost({
-      ...fields,
-    });
+    await addGeneratorUsingPost(fields);
     hide();
     message.success('添加成功');
     return true;
@@ -49,7 +48,7 @@ const CreateModal: React.FC<Props> = (props) => {
       <ProTable
         type="form"
         columns={columns}
-        onSubmit={async (values: API.UserAddRequest) => {
+        onSubmit={async (values: API.GeneratorAddRequest) => {
           const success = await handleAdd(values);
           if (success) {
             onSubmit?.(values);

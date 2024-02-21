@@ -2,9 +2,9 @@ import { PlusOutlined } from '@ant-design/icons';
 import type { ActionType, ProColumns, ProDescriptionsItemProps } from '@ant-design/pro-components';
 import { PageContainer, ProDescriptions, ProTable } from '@ant-design/pro-components';
 import '@umijs/max';
-import { Button, Drawer, message, Modal, Space, Typography } from 'antd';
+import { Button, Drawer, message, Tag, Select, Space, Typography, Modal } from 'antd';
 import React, { useRef, useState } from 'react';
-import { listUserByPageUsingPost, deleteUserUsingPost } from '@/services/backend/userController';
+import { listGeneratorByPageUsingPost, deleteGeneratorUsingPost } from '@/services/backend/generatorController';
 import UpdateModal from './components/UpdateModel';
 import CreateModal from './components/CreateModel';
 
@@ -38,7 +38,7 @@ const UserAdminPage: React.FC = () => {
     const hide = message.loading('正在删除');
     if (!row) return true;
     try {
-      await deleteUserUsingPost({
+      await deleteGeneratorUsingPost({
         id: row.id,
       });
       hide();
@@ -55,7 +55,7 @@ const UserAdminPage: React.FC = () => {
   /**
    * 表格列数据
    */
-  const columns: ProColumns<API.User>[] = [
+  const columns: ProColumns<API.Generator>[] = [
     {
       title: 'id',
       dataIndex: 'id',
@@ -63,18 +63,52 @@ const UserAdminPage: React.FC = () => {
       hideInForm: true,
     },
     {
-      title: '账号',
-      dataIndex: 'userAccount',
+      title: '名称',
+      dataIndex: 'name',
       valueType: 'text',
     },
     {
-      title: '用户名',
-      dataIndex: 'userName',
+      title: '描述',
+      dataIndex: 'description',
+      valueType: 'textarea',
+    },
+    {
+      title: '基础包',
+      dataIndex: 'basePackage',
       valueType: 'text',
     },
     {
-      title: '头像',
-      dataIndex: 'userAvatar',
+      title: '版本',
+      dataIndex: 'version',
+      valueType: 'text',
+    },
+    {
+      title: '作者',
+      dataIndex: 'author',
+      valueType: 'text',
+    },
+    {
+      title: '标签',
+      dataIndex: 'tags',
+      valueType: 'text',
+      renderFormItem(schema) {
+        const { fieldProps } = schema;
+        // @ts-ignore
+        return <Select mode="tags" {...fieldProps} />;
+      },
+      render(_, record) {
+        if (!record.tags) {
+          return <></>;
+        }
+
+        return JSON.parse(record.tags).map((tag: string) => {
+          return <Tag key={tag}>{tag}</Tag>;
+        });
+      },
+    },
+    {
+      title: '图片',
+      dataIndex: 'picture',
       valueType: 'image',
       fieldProps: {
         width: 64,
@@ -82,21 +116,33 @@ const UserAdminPage: React.FC = () => {
       hideInSearch: true,
     },
     {
-      title: '简介',
-      dataIndex: 'userProfile',
-      valueType: 'textarea',
+      title: '文件配置',
+      dataIndex: 'fileConfig',
+      valueType: 'jsonCode',
     },
     {
-      title: '权限',
-      dataIndex: 'userRole',
+      title: '模型配置',
+      dataIndex: 'modelConfig',
+      valueType: 'jsonCode',
+    },
+    {
+      title: '产物包路径',
+      dataIndex: 'distPath',
+      valueType: 'text',
+    },
+    {
+      title: '状态',
+      dataIndex: 'status',
       valueEnum: {
-        user: {
-          text: '用户',
-        },
-        admin: {
-          text: '管理员',
+        0: {
+          text: '默认',
         },
       },
+    },
+    {
+      title: '创建用户',
+      dataIndex: 'userId',
+      valueType: 'text',
     },
     {
       title: '创建时间',
@@ -119,7 +165,7 @@ const UserAdminPage: React.FC = () => {
       dataIndex: 'option',
       valueType: 'option',
       render: (_, record) => (
-        <Space size="middle">
+        <Space size="small">
           <Typography.Link
             onClick={() => {
               setCurrentRow(record);
@@ -128,9 +174,7 @@ const UserAdminPage: React.FC = () => {
           >
             修改
           </Typography.Link>
-          <Typography.Link
-            type="danger"
-            onClick={() => {
+          <Typography.Link type="danger" onClick={() => {
               Modal.confirm({
                 title: '确定要删除吗？',
                 content: '删除后数据将无法恢复',
@@ -138,8 +182,7 @@ const UserAdminPage: React.FC = () => {
                   handleDelete(record);
                 },
               });
-            }}
-          >
+            }}>
             删除
           </Typography.Link>
         </Space>
@@ -171,7 +214,7 @@ const UserAdminPage: React.FC = () => {
           const sortField = Object.keys(sort)?.[0];
           // 要取的排序字段
           const sortOrder = sort?.[sortField] ?? undefined;
-          const { data, code } = await listUserByPageUsingPost({
+          const { data, code } = await listGeneratorByPageUsingPost({
             ...params,
             sortField,
             sortOrder,

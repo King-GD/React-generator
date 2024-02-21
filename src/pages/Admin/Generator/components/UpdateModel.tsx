@@ -1,42 +1,49 @@
+import { updateGeneratorUsingPost } from '@/services/backend/generatorController';
+import { ProColumns, ProTable } from '@ant-design/pro-components';
+import '@umijs/max';
 import { message, Modal } from 'antd';
-import  '@umijs/max';
-import { updateUserUsingPost } from '@/services/backend/userController';
-import { ProTable, ProColumns } from '@ant-design/pro-components';  
 import React from 'react';
 
-
 interface Props {
-  oldData?: API.User;
+  oldData?: API.Generator;
   visible: boolean;
-  columns: ProColumns<API.User>[];
-  onSubmit?: (values: API.UserAddRequest) => void;
-  onCancel?: () => void;
+  columns: ProColumns<API.Generator>[];
+  onSubmit: (values: API.GeneratorAddRequest) => void;
+  onCancel: () => void;
 }
 
 /**
- *
- * @zh-CN 更新节点
+ * 更新节点
  *
  * @param fields
  */
-const handleUpdate = async (fields: API.UserUpdateRequest) => {
+const handleUpdate = async (fields: API.GeneratorUpdateRequest) => {
+  fields.fileConfig = JSON.parse((fields.fileConfig || '{}') as string);
+  fields.modelConfig = JSON.parse((fields.modelConfig || '{}') as string);
   const hide = message.loading('正在更新');
   try {
-    await updateUserUsingPost({
-      ...fields,
-    });
+    await updateGeneratorUsingPost(fields);
     hide();
     message.success('更新成功');
     return true;
-  } catch (error) {
+  } catch (error: any) {
     hide();
-    message.error('更新失败，请重试!');
+    message.error('更新失败，' + error.message);
     return false;
   }
 };
 
+/**
+ * 更新弹窗
+ * @param props
+ * @constructor
+ */
 const UpdateModal: React.FC<Props> = (props) => {
-  const { visible, columns, onSubmit, onCancel, oldData } = props;
+  const { oldData, visible, columns, onSubmit, onCancel } = props;
+
+  if (!oldData) {
+    return <></>;
+  }
 
   return (
     <Modal
@@ -51,11 +58,16 @@ const UpdateModal: React.FC<Props> = (props) => {
       <ProTable
         type="form"
         columns={columns}
-        form={{ initialValues: oldData}}
-        onSubmit={async (values: API.UserAddRequest) => {
+        form={{
+          initialValues: {
+            ...oldData,
+            tags: JSON.parse(oldData.tags || '[]'),
+          },
+        }}
+        onSubmit={async (values: API.GeneratorAddRequest) => {
           const success = await handleUpdate({
             ...values,
-            id: oldData?.id,
+            id: oldData.id as any,
           });
           if (success) {
             onSubmit?.(values);
