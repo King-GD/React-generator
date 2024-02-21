@@ -1,6 +1,10 @@
 import FileUploader from '@/components/FileUploader';
 import PictureUploader from '@/components/PictureUploader';
-import { addGeneratorUsingPost } from '@/services/backend/generatorController';
+import {
+  addGeneratorUsingPost,
+  getGeneratorVoByIdUsingGet,
+  editGeneratorUsingPost,
+} from '@/services/backend/generatorController';
 import type { ProFormInstance } from '@ant-design/pro-components';
 import {
   ProForm,
@@ -10,9 +14,10 @@ import {
   ProFormTextArea,
   StepsForm,
 } from '@ant-design/pro-components';
+import { useSearchParams } from '@@/exports';
 import { message } from 'antd';
-import React, { useRef, useState } from 'react';
-import { history } from 'umi';
+import React, { useEffect, useRef, useState } from 'react';
+import { history } from '@@/exports';
 
 /**
  * 创建生成器页面
@@ -20,13 +25,89 @@ import { history } from 'umi';
  */
 const GeneratorAddPage: React.FC = () => {
   const formRef = useRef<ProFormInstance>();
-  // 表单数据
-  const [formData, setFormData] = useState<API.GeneratorAddRequest>({});
-  // 当前表单步骤
-  const [currentStep, setCurrentStep] = useState(0);
+  // 原始数据
+  const [oldData, setOldData] = useState<API.GeneratorEditRequest>();
+  // 从当前页面获取的数url参数
+  const [searchParms] = useSearchParams();
+  const id = Number(searchParms.get('id'));
 
+  /**
+   * 加载数据
+   */
+  const loadData = async () => {
+    if (!id) {
+      
+      return;
+    }
+    try {
+
+      const res = await getGeneratorVoByIdUsingGet({ id, });
+      if (res.data) {
+        const { distPath } = res.data || {};
+        if (distPath) {
+          // @ts-ignore
+          res.data.distPath = [
+            {
+              uid: id,
+              name: '文件' + id,
+              status: 'done',
+              url: distPath,
+              response: distPath,
+            },
+          ];
+        }
+        setOldData(res.data);
+      }
+    } catch (error: any) {
+      message.error('加载数据失败：' + error.message);
+    }
+  };
+
+
+  useEffect(() => {
+    if (id) {
+      loadData();
+    }
+  }, [id]);
+  
+  /**
+   * 创建
+   * @param value 
+   */
+  const doAdd = async (value: API.GeneratorAddRequest) => {
+    try {
+      const res = await addGeneratorUsingPost(value);
+      if (res.data) {
+        message.success('创建成功');
+        history.push(`/generator/detail/${res.data}`);
+      }
+    } catch (error: any) {
+      message.error('创建失败：' + error.message);
+    }
+  }
+
+  /**
+   * 更新
+   * @param value 
+   */
+  const doUpdate = async (value: API.GeneratorEditRequest) => {
+    try {
+      const res = await editGeneratorUsingPost(value);
+      if (res.data) {
+        message.success('更新成功');
+        history.push(`/generator/detail/${res.data}`);
+      }
+    } catch (error: any) {
+      message.error('更新失败：' + error.message);
+    }
+  }
+
+
+  /**
+   * 提交表单
+   * @param value
+   */
   const doSubmit = async (value: API.GeneratorAddRequest) => {
-    console.log(value);
     // 数据转换
     if (!value.fileConfig) {
       value.fileConfig = {};
@@ -40,61 +121,48 @@ const GeneratorAddPage: React.FC = () => {
       // @ts-ignore
       value.distPath = value.distPath[0].response;
     }
-    try {
-      const res = await addGeneratorUsingPost(value);
-      if (res.data) {
-        message.success('创建成功');
-        history.push(`/generator/detail/${res.data}`);
-      }
-    } catch (e: any) {
-      message.error('创建失败：' + e.message);
+    if (id) {
+      await doUpdate({id, ...value});
+    } else {
+      await doAdd(value);
     }
   };
 
   return (
     <ProCard>
-      <StepsForm<API.GeneratorAddRequest>
-        formRef={formRef}
-        onFinish={doSubmit}
-        onCurrentChange={(step) => {
-          if (step < currentStep) {
-            formRef.current?.setFieldsValue(formData);
-          }
-          setCurrentStep(step);
-        }}
-      >
-        <StepsForm.StepForm
-          name="base"
-          title="基本信息"
-          onFinish={async () => {
-            const values = formRef.current?.getFieldsValue();
-            setFormData(values);
-            console.log(values);
-            return true;
+      {/* 创建或者已加载要更新的数据时，才渲染表单，顺利填充默认值 */}
+      {(!id || oldData) && (
+        <StepsForm<API.GeneratorAddRequest | API.GeneratorEditRequest>
+          formRef={formRef}
+          formProps={{
+            initialValues: oldData,
           }}
+          onFinish={doSubmit}
         >
-          <ProFormText name="name" label="名称" placeholder="请输入名称" />
-          <ProFormTextArea name="description" label="描述" placeholder="请输入描述" />
-          <ProFormText name="basePackage" label="基础包" placeholder="请输入基础包" />
-          <ProFormText name="version" label="版本" placeholder="请输入版本" />
-          <ProFormText name="author" label="作者" placeholder="请输入作者" />
-          <ProFormSelect label="标签" mode="tags" name="tags" placeholder="请输入标签列表" />
-          <ProForm.Item label="图片" name="picture">
-            <PictureUploader biz="generator_picture" />
-          </ProForm.Item>
-        </StepsForm.StepForm>
-        <StepsForm.StepForm name="fileConfig" title="文件配置">
-          {/*todo 待补充*/}
-        </StepsForm.StepForm>
-        <StepsForm.StepForm name="modelConfig" title="模型配置">
-          {/*todo 待补充*/}
-        </StepsForm.StepForm>
-        <StepsForm.StepForm name="dist" title="生成器文件">
-          <ProForm.Item label="产物包" name="distPath">
-            <FileUploader biz="generator_dist" description="请上传生成器文件压缩包" />
-          </ProForm.Item>
-        </StepsForm.StepForm>
-      </StepsForm>
+          <StepsForm.StepForm name="base" title="基本信息">
+            <ProFormText name="name" label="名称" placeholder="请输入名称" />
+            <ProFormTextArea name="description" label="描述" placeholder="请输入描述" />
+            <ProFormText name="basePackage" label="基础包" placeholder="请输入基础包" />
+            <ProFormText name="version" label="版本" placeholder="请输入版本" />
+            <ProFormText name="author" label="作者" placeholder="请输入作者" />
+            <ProFormSelect label="标签" mode="tags" name="tags" placeholder="请输入标签列表" />
+            <ProForm.Item label="图片" name="picture">
+              <PictureUploader biz="generator_picture" />
+            </ProForm.Item>
+          </StepsForm.StepForm>
+          <StepsForm.StepForm name="fileConfig" title="文件配置">
+            {/* todo 待补充 */}
+          </StepsForm.StepForm>
+          <StepsForm.StepForm name="modelConfig" title="模型配置">
+            {/* todo 待补充 */}
+          </StepsForm.StepForm>
+          <StepsForm.StepForm name="dist" title="生成器文件">
+            <ProForm.Item label="产物包" name="distPath">
+              <FileUploader biz="generator_dist" description="请上传生成器文件压缩包" />
+            </ProForm.Item>
+          </StepsForm.StepForm>
+        </StepsForm>
+      )}
     </ProCard>
   );
 };

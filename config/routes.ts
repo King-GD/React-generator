@@ -9,6 +9,7 @@ export default [
   },
   { path: '/', name: '首页', icon: 'home', component: './Index' },
   {path: '/generator/add', name: '创建生成器', icon: 'plus', component: './Generator/Add' },
+  {path: '/generator/update', name: '修改生成器', icon: 'plus', component: './Generator/Add', hideInMenu: true },
   {
     path: '/admin',
     name: '管理页',

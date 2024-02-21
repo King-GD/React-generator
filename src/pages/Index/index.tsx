@@ -4,7 +4,7 @@ import { PageContainer, ProFormSelect, ProFormText, QueryFilter } from '@ant-des
 import { Avatar, Card, Flex, Image, Input, List, message, Tabs, Tag, Typography } from 'antd';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
-import { Link } from 'umi';
+import { Link } from '@@/exports';
 
 /**
  * 默认分页参数
@@ -112,6 +112,7 @@ const IndexPage: React.FC = () => {
       <List<API.GeneratorVO>
         rowKey="id"
         loading={loading}
+        style={{ marginTop: 16 }}
         grid={{
           gutter: 16,
           xs: 1,
@@ -136,8 +137,8 @@ const IndexPage: React.FC = () => {
         }}
         renderItem={(data) => (
           <List.Item>
-            <Link to={`/generator/detail/${data.id}`}>
-              <Card hoverable cover={<Image alt={data.name} src={data.picture} />}>
+            <Card hoverable cover={<Image alt={data.name} src={data.picture} />}>
+              <Link to={`/generator/detail/${data.id}`}>
                 <Card.Meta
                   title={<a>{data.name}</a>}
                   description={
@@ -155,8 +156,8 @@ const IndexPage: React.FC = () => {
                     <Avatar src={data.user?.userAvatar ?? <UserOutlined />} />
                   </div>
                 </Flex>
-              </Card>
-            </Link>
+              </Link>
+            </Card>
           </List.Item>
         )}
       />
