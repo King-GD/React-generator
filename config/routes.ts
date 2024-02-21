@@ -8,6 +8,7 @@ export default [
     ],
   },
   { path: '/', name: '首页', icon: 'home', component: './Index' },
+  {path: '/generator/add', name: '创建生成器', icon: 'plus', component: './Generator/Add' },
   {
     path: '/admin',
     name: '管理页',
@@ -19,6 +20,6 @@ export default [
       { icon: 'tools', path: '/admin/generator', name: '生成器管理', component: './Admin/Generator' },
     ],
   },
-  // { path: '/', redirect: '/welcome' },
+  
   { path: '*', layout: false, component: './404' },
 ];
