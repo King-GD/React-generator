@@ -1,6 +1,7 @@
 import AuthorInfo from '@/pages/Generator/Detail/components/AuthorInfo';
 import FileConfig from '@/pages/Generator/Detail/components/FileConfig';
 import ModelConfig from '@/pages/Generator/Detail/components/ModelConfig';
+import GeneratorUsePage from '@/pages/Generator/Detail/components/immediatelyUse';
 import {
   downloadGeneratorByIdUsingGet,
   getGeneratorVoByIdUsingGet,
@@ -17,7 +18,7 @@ import React, { useEffect, useState } from 'react';
  * 生成器详细页面
  * @constructor
  */
-const GeneratorAddPage: React.FC = () => {
+const GeneratorDetailPage: React.FC = () => {
   const { id } = useParams();
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<API.GeneratorVO>({});
@@ -29,6 +30,7 @@ const GeneratorAddPage: React.FC = () => {
     if (id) {
       setLoading(true);
       try {
+        // @ts-ignore
         const res = await getGeneratorVoByIdUsingGet({ id });
 
         setData(res.data || {});
@@ -112,7 +114,7 @@ const GeneratorAddPage: React.FC = () => {
             <Typography.Paragraph type="secondary">作者：{data.author}</Typography.Paragraph>
             <div style={{ marginBottom: 24 }}></div>
             <Space size="middle">
-              <Button type="primary">立即使用</Button>
+              {/* <Button type="primary">立即使用</Button> */}
               {downloadButton}
               {editButton}
             </Space>
@@ -143,10 +145,15 @@ const GeneratorAddPage: React.FC = () => {
             label: '作者信息',
             children: <AuthorInfo data={data} />,
           },
+          {
+            key: 'immediatelyUse',
+            label: '立即使用',
+            children: <GeneratorUsePage />,
+          },
         ]}
       />
     </PageContainer>
   );
 };
 
-export default GeneratorAddPage;
+export default GeneratorDetailPage;
