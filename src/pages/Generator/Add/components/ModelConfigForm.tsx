@@ -112,7 +112,7 @@ export default (props: Props) => {
             onClick={() =>
               add({
                 groupName: '分组',
-                groupKey: 'group',
+                groupKey: 'groupKey',
               })
             }
           >
