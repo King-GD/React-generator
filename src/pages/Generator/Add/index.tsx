@@ -16,8 +16,8 @@ import {
 } from '@ant-design/pro-components';
 import { useSearchParams } from '@@/exports';
 import { message } from 'antd';
-import React, { useEffect, useRef, useState } from 'react';
-import { history } from '@@/exports';
+import React, { useEffect, useRef, useState,  } from 'react';
+import { history } from '@umijs/max';
 
 /**
  * 创建生成器页面
@@ -29,18 +29,17 @@ const GeneratorAddPage: React.FC = () => {
   const [oldData, setOldData] = useState<API.GeneratorEditRequest>();
   // 从当前页面获取的数url参数
   const [searchParms] = useSearchParams();
-  const id = Number(searchParms.get('id'));
+  const id = searchParms.get('id');
+  console.log(id)
 
   /**
    * 加载数据
    */
   const loadData = async () => {
     if (!id) {
-      
       return;
     }
     try {
-
       const res = await getGeneratorVoByIdUsingGet({ id, });
       if (res.data) {
         const { distPath } = res.data || {};
@@ -65,8 +64,12 @@ const GeneratorAddPage: React.FC = () => {
 
 
   useEffect(() => {
+    console.log('useEffect is running');
+    console.log('useEffect is running', id)
     if (id) {
+      console.log('id is not null, loadData will be called', id);
       loadData();
+      console.log(oldData)
     }
   }, [id]);
   
@@ -129,9 +132,10 @@ const GeneratorAddPage: React.FC = () => {
   };
 
   return (
+
     <ProCard>
       {/* 创建或者已加载要更新的数据时，才渲染表单，顺利填充默认值 */}
-      {(!id || oldData) && (
+      {(!id || oldData ) && (
         <StepsForm<API.GeneratorAddRequest | API.GeneratorEditRequest>
           formRef={formRef}
           formProps={{

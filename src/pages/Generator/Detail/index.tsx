@@ -89,7 +89,7 @@ const GeneratorAddPage: React.FC = () => {
    */
 
   const editButton = my && (
-    <Link to={`/generator/update?${data.id}`}>
+    <Link to={`/generator/update?id=${data.id}`}>
       <Button icon={<EditOutlined />}>编辑</Button>
     </Link>
   );
