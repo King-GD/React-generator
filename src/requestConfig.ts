@@ -100,7 +100,7 @@ export const requestConfig: RequestConfig = {
 
   // 响应拦截器
   responseInterceptors: [
-    (response) => {
+    (response: any) => {
       // 请求路径
       const requestPath: string = response.config.url ?? '';
 
@@ -109,6 +109,10 @@ export const requestConfig: RequestConfig = {
 
       if (!data) {
         message.error('服务异常');
+      }
+      // 文件下载时，直接返回
+      if (response.data instanceof Blob) {
+        return response;
       }
 
       // 错误码处理
