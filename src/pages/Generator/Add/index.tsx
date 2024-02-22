@@ -18,6 +18,7 @@ import { useSearchParams } from '@@/exports';
 import { message } from 'antd';
 import React, { useEffect, useRef, useState,  } from 'react';
 import { history } from '@umijs/max';
+import ModelConfigForm from './components/ModelConfigForm';
 
 /**
  * 创建生成器页面
@@ -29,8 +30,7 @@ const GeneratorAddPage: React.FC = () => {
   const [oldData, setOldData] = useState<API.GeneratorEditRequest>();
   // 从当前页面获取的数url参数
   const [searchParms] = useSearchParams();
-  const id = searchParms.get('id');
-  console.log(id)
+  const id =  Number(searchParms.get('id'));
 
   /**
    * 加载数据
@@ -64,12 +64,8 @@ const GeneratorAddPage: React.FC = () => {
 
 
   useEffect(() => {
-    console.log('useEffect is running');
-    console.log('useEffect is running', id)
     if (id) {
-      console.log('id is not null, loadData will be called', id);
       loadData();
-      console.log(oldData)
     }
   }, [id]);
   
@@ -157,8 +153,11 @@ const GeneratorAddPage: React.FC = () => {
           <StepsForm.StepForm name="fileConfig" title="文件配置">
             {/* todo 待补充 */}
           </StepsForm.StepForm>
-          <StepsForm.StepForm name="modelConfig" title="模型配置">
-            {/* todo 待补充 */}
+          <StepsForm.StepForm name="modelConfig" title="模型配置" onFinish={async (value) => {
+            console.log(value);
+            return false;
+          } }>
+            <ModelConfigForm  formRef={formRef} />
           </StepsForm.StepForm>
           <StepsForm.StepForm name="dist" title="生成器文件">
             <ProForm.Item label="产物包" name="distPath">
