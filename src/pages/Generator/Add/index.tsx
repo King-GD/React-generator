@@ -155,9 +155,9 @@ const GeneratorAddPage: React.FC = () => {
           </StepsForm.StepForm>
           <StepsForm.StepForm name="modelConfig" title="模型配置" onFinish={async (value) => {
             console.log(value);
-            return false;
+            return true;
           } }>
-            <ModelConfigForm  formRef={formRef} />
+            <ModelConfigForm formRef={formRef} oldData={oldData}/>
           </StepsForm.StepForm>
           <StepsForm.StepForm name="dist" title="生成器文件">
             <ProForm.Item label="产物包" name="distPath">
