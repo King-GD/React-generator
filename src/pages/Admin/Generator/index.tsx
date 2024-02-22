@@ -4,7 +4,10 @@ import { PageContainer, ProDescriptions, ProTable } from '@ant-design/pro-compon
 import '@umijs/max';
 import { Button, Drawer, message, Tag, Select, Space, Typography, Modal } from 'antd';
 import React, { useRef, useState } from 'react';
-import { listGeneratorByPageUsingPost, deleteGeneratorUsingPost } from '@/services/backend/generatorController';
+import {
+  listGeneratorByPageUsingPost,
+  deleteGeneratorUsingPost,
+} from '@/services/backend/generatorController';
 import UpdateModal from './components/UpdateModel';
 import CreateModal from './components/CreateModel';
 
@@ -51,6 +54,28 @@ const UserAdminPage: React.FC = () => {
       return false;
     }
   };
+
+  /**
+   * 变更单元格样式
+   * @param {number} length - 单元格长度
+   */
+  const handleCell = (length: number) => ({
+    style: {
+      overflow: 'hidden',
+      maxWidth: length,
+      textOverflow: 'ellipsis',
+      whiteSpace: 'nowrap',
+      maxHeight: '20px',
+    },
+    onClick: (e: any) => {
+      const { target } = e;
+      if (target.style.whiteSpace === 'normal') {
+        target.style.whiteSpace = 'nowrap';
+      } else {
+        target.style.whiteSpace = 'normal';
+      }
+    },
+  });
 
   /**
    * 表格列数据
@@ -119,16 +144,19 @@ const UserAdminPage: React.FC = () => {
       title: '文件配置',
       dataIndex: 'fileConfig',
       valueType: 'jsonCode',
+      onCell: () => handleCell(200),
     },
     {
       title: '模型配置',
       dataIndex: 'modelConfig',
       valueType: 'jsonCode',
+      onCell: () => handleCell(200),
     },
     {
       title: '产物包路径',
       dataIndex: 'distPath',
       valueType: 'text',
+      onCell: () => handleCell(200),
     },
     {
       title: '状态',
@@ -174,7 +202,9 @@ const UserAdminPage: React.FC = () => {
           >
             修改
           </Typography.Link>
-          <Typography.Link type="danger" onClick={() => {
+          <Typography.Link
+            type="danger"
+            onClick={() => {
               Modal.confirm({
                 title: '确定要删除吗？',
                 content: '删除后数据将无法恢复',
@@ -182,7 +212,8 @@ const UserAdminPage: React.FC = () => {
                   handleDelete(record);
                 },
               });
-            }}>
+            }}
+          >
             删除
           </Typography.Link>
         </Space>
@@ -198,6 +229,7 @@ const UserAdminPage: React.FC = () => {
         search={{
           labelWidth: 120,
         }}
+        scroll={{ x: 'max-content' }}
         toolBarRender={() => [
           <Button
             type="primary"

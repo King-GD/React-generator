@@ -31,7 +31,7 @@ const GeneratorAddPage: React.FC = () => {
       try {
         const res = await getGeneratorVoByIdUsingGet({ id });
 
-        setData(res.data);
+        setData(res.data || {});
       } catch (error: any) {
         message.error('获取数据失败' + error.message);
       }
