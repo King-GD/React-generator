@@ -7,6 +7,10 @@ interface Props {
   oldData: any;
 }
 
+/** 
+ * 文件配置表单
+ */
+
 export default (props: Props) => {
   const { formRef, oldData } = props;
 
