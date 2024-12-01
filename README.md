@@ -3,14 +3,18 @@
 开发者可以在平台上制作并发布代码生成器，用户可以搜索、下载、在线使用代码生成器，管理员可以集中管理所有用户和生成器。
 
 ## 项目展示
+登录
 ![image](https://github.com/user-attachments/assets/556fc237-2653-44b3-bb1e-4871923429b6)
+首页
 ![image](https://github.com/user-attachments/assets/da993b59-59cc-4463-b90d-fae40a30cc70)
+创建生成器
 ![image](https://github.com/user-attachments/assets/dd69f0dc-b3ea-4ac4-91ab-e6419017dfa1)
+模型配置
 ![image](https://github.com/user-attachments/assets/418ca37f-45c9-4288-8b24-e46826b59fbe)
+参数设置
 ![image](https://github.com/user-attachments/assets/ca8dbc61-e233-4e7f-92f4-72e73ddcad82)
-
+生成器生成
 ![image](https://github.com/user-attachments/assets/1d0691ac-edf7-458f-80e7-a2d5b61086a6)
-
 
 ## 技术栈
 
